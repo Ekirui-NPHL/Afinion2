@@ -1,0 +1,29 @@
+
+# R
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+.Renviron
+.Rprofile
+*.Rproj
+
+# rsconnect
+.rsconnect/
+
+# Data
+*.csv
+*.xlsx
+*.sqlite
+*.sqlite3
+*.db
+data/
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# GitHub
+.github/
+
