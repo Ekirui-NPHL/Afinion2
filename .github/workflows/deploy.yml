@@ -1,0 +1,48 @@
+name: Deploy Afinion2 to shinyapps.io 
+on: 
+  push: 
+    branches: [ main, master ] 
+  workflow_dispatch: 
+jobs: 
+  deploy: 
+    runs-on: ubuntu-latest 
+    steps: 
+      - uses: actions/checkout@v3 
+      - name: Setup R 
+        uses: r-lib/actions/setup-r@v2 
+        with: 
+          r-version: "4.3.1" 
+      - name: Install system dependencies 
+          sudo apt-get update 
+          sudo apt-get install -y \ 
+            libcurl4-openssl-dev \ 
+            libssl-dev \ 
+            libxml2-dev \ 
+            libmariadb-dev \ 
+            libmariadb-dev-compat 
+      - name: Install R packages 
+          install.packages(c( 
+            "shiny", "shinydashboard", "shinyauthr", "tidyverse", 
+            "DT", "plotly", "openxlsx", "lubridate", "DBI", 
+            "pool", "RMySQL", "sodium", "jsonlite", "rsconnect" 
+          ), repos = "https://cloud.r-project.org/") 
+        shell: Rscript {0} 
+      - name: Deploy to shinyapps.io 
+        env: 
+          SHINYAPPS_TOKEN: \${{ secrets.SHINYAPPS_TOKEN }} 
+          SHINYAPPS_SECRET: \${{ secrets.SHINYAPPS_SECRET }} 
+          SHINYAPPS_USERNAME: \${{ secrets.SHINYAPPS_USERNAME }} 
+          library(rsconnect) 
+          rsconnect::setAccountInfo( 
+            name = Sys.getenv("SHINYAPPS_USERNAME"), 
+            token = Sys.getenv("SHINYAPPS_TOKEN"), 
+            secret = Sys.getenv("SHINYAPPS_SECRET") 
+          ) 
+          rsconnect::deployApp( 
+            appDir = ".", 
+            appName = "Afinion2", 
+            appTitle = "Afinion2 Study - Integrated TB/HIV/Diabetes Care", 
+            forceUpdate = TRUE, 
+            launch.browser = FALSE 
+          ) 
+        shell: Rscript {0} 
