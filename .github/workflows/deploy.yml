@@ -28,30 +28,12 @@ jobs:
           
       - name: Install R packages
         run: |
-          install.packages(c(
-            "shiny", "shinydashboard", "shinyauthr", "tidyverse",
-            "DT", "plotly", "openxlsx", "lubridate", "DBI",
-            "pool", "RMySQL", "sodium", "jsonlite", "rsconnect"
-          ), repos = "https://cloud.r-project.org/")
-        shell: Rscript {0}
-        
+          Rscript -e "install.packages(c('shiny', 'shinydashboard', 'shinyauthr', 'tidyverse', 'DT', 'plotly', 'openxlsx', 'lubridate', 'DBI', 'pool', 'RMySQL', 'sodium', 'jsonlite', 'rsconnect'), repos = 'https://cloud.r-project.org/')"
+          
       - name: Deploy to shinyapps.io
         env:
           SHINYAPPS_TOKEN: ${{ secrets.SHINYAPPS_TOKEN }}
           SHINYAPPS_SECRET: ${{ secrets.SHINYAPPS_SECRET }}
           SHINYAPPS_USERNAME: ${{ secrets.SHINYAPPS_USERNAME }}
         run: |
-          library(rsconnect)
-          rsconnect::setAccountInfo(
-            name = Sys.getenv("SHINYAPPS_USERNAME"),
-            token = Sys.getenv("SHINYAPPS_TOKEN"),
-            secret = Sys.getenv("SHINYAPPS_SECRET")
-          )
-          rsconnect::deployApp(
-            appDir = ".",
-            appName = "Afinion2",
-            appTitle = "Afinion2 Study - Integrated TB/HIV/Diabetes Care",
-            forceUpdate = TRUE,
-            launch.browser = FALSE
-          )
-        shell: Rscript {0}
+          Rscript -e "library(rsconnect); rsconnect::setAccountInfo(name=Sys.getenv('SHINYAPPS_USERNAME'), token=Sys.getenv('SHINYAPPS_TOKEN'), secret=Sys.getenv('SHINYAPPS_SECRET')); rsconnect::deployApp(appDir='.', appName='Afinion2', forceUpdate=TRUE)"
